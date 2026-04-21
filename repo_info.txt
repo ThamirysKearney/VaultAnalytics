@@ -1,147 +1,255 @@
-=== ESTRUCTURA DEL REPOSITORIO ===
-
+=== STRUCTURE ===
 .:
+app/
+data/
 Planning.md
+README.md
 repo_info.txt
+requirements.txt
+specs/
+src/
 
-=== CONTENIDO DE ARCHIVOS ===
-=== ./Planning.md ===
-from google.ds_python_interpreter import HTML
-import os
+./app:
+dashboard.py
 
-# Define the content of the markdown file
-md_content = """# Student Enrollment Analysis & Data Privacy Project
+./data:
+processed/
+raw/
 
-## 1. New Project Direction (Clear + Strong)
-### 🎯 New Goal
-"Analyze student enrollment patterns while preserving sensitive data using anonymization and encryption techniques."
+./data/processed:
 
-**This is:**
-* ✅ **Realistic** with your data.
-* ✅ **Strong** for data analyst roles.
-* ✅ **Still valid** for a cybersecurity portfolio.
+./data/raw:
 
----
+./specs:
+open_spec.md
 
-## 2. Dataset Capabilities
-Let’s translate the raw columns into a usable schema:
+./src:
+data_cleaning.py
+encryption.py
+feature_engineering.py
 
-| Raw Column | Meaning | Action |
-| :--- | :--- | :--- |
-| **Timestamp** | Enrollment date | ✅ Keep (Split into Date/Time) |
-| **Email (x2)** | PII | 🔐 Hash |
-| **Empty column** | Useless | ❌ Drop |
-| **"cargar" column** | Useless | ❌ Drop |
-| **Course edition code** | Course ID | ⚠️ Map to course name |
-| **Name** | PII | ❌ Drop |
-| **Surnames** | PII | ❌ Drop |
-| **DOB** | Sensitive | ⚠️ Convert to Age / Drop |
-| **Age** | Demographic | ✅ Keep |
-| **Phone** | PII | 🔐 Hash |
-| **Replacement (Sí/No)** | Behavior | ✅ Keep |
+=== FILE CONTENT ===
+=== ./app/dashboard.py ===
+import streamlit as st
+import pandas as pd
+import plotly.express as px
 
----
+df = pd.read_csv("data/processed/data.csv")
 
-## 3. Security Layer
-This dataset is ideal for demonstrating cybersecurity principles. 
+st.title("📊 Enrollment Dashboard")
 
-**Your pipeline:** `Raw Data → Remove PII → Hash Identifiers → Clean → Analyze`
+# Filters
+course = st.selectbox("Select Course", df["course_code"].unique())
+df_filtered = df[df["course_code"] == course]
 
-**Recruiter Value:**
-* **Data Minimization:** Applying GDPR principles.
-* **Pseudonymization:** Hashing emails and phone numbers.
-* **Secure Processing:** Handling sensitive records correctly.
+# Enrollment by day
+fig = px.histogram(df_filtered, x="day_of_week")
+st.plotly_chart(fig)
 
----
+# Age distribution
+fig2 = px.histogram(df_filtered, x="age_group")
+st.plotly_chart(fig2)
 
-## 4. Key Insights to Extract
-Since attendance data is missing, we focus on behavioral, demographic, and temporal data.
+# Replacement
+fig3 = px.pie(df_filtered, names="replacement")
+st.plotly_chart(fig3)=== ./Planning.md ===
+# 📊 Secure Student Enrollment Analytics Project
 
-### 🔍 A. Enrollment Trends
-* Enrollments per day/week/month.
-* Peak registration times (hour of day).
-* **Insight:** Identifying optimal times for user engagement.
+## 🎯 Goal
+Analyze student enrollment patterns while preserving sensitive data using anonymization and encryption.
 
-### 👥 B. Demographics
-* Age distribution across the student body.
-* Age groups vs. course selection.
-* **Insight:** Understanding which age groups prefer specific courses.
+## 🔐 Security Focus
+- Remove PII (names, surnames, DOB)
+- Hash emails and phone numbers
+- Encrypt dataset for storage
 
-### 📚 C. Course Demand
-* Most popular courses vs. least popular courses.
-* **Insight:** Guiding marketing focus and resource allocation.
+## 📊 Analytics Focus
+- Enrollment trends over time
+- Course popularity
+- Age group analysis
+- Replacement vs new enrollments
 
-### 🔁 D. Replacement Behavior (High Value)
-* Percentage of replacements vs. new enrollments.
-* **Insight:** High replacement rates may indicate a potential dropout problem or course instability.
+## 🧠 Why This Project
+This project demonstrates:
+- Data cleaning of messy real-world data
+- Privacy-preserving analytics
+- Feature engineering
+- Dashboard creation (Streamlit)=== ./README.md ===
+# 🔐 Secure Student Enrollment Analytics Dashboard
 
----
-
-## 5. Constraints (What NOT to do)
-To maintain professional credibility, avoid:
-* Analyzing attendance.
-* Explaining why people don't attend.
-* Measuring drop-off after enrollment.
+## 🎯 Objective
+This project analyzes student enrollment patterns while preserving sensitive personal data using anonymization and encryption techniques.
 
 ---
 
-## 6. Analytics Questions (Phase 3)
-1.  **Enrollment Behavior:** When do most users enroll? Are there peak days?
-2.  **Course Popularity:** Which courses have the highest demand?
-3.  **User Demographics:** Which age groups enroll the most?
-4.  **Replacement Analysis:** What % of enrollments are replacements?
-5.  **Operational Insight:** Are certain courses unstable?
+## 🔐 Data Security Approach
+
+### Data Minimization
+Removed:
+- Names
+- Surnames
+- Date of birth
+
+### Pseudonymization
+Applied SHA-256 hashing to:
+- Student emails
+- Teacher emails
+- Phone numbers
+
+### Encryption
+- Dataset encrypted using Fernet symmetric encryption
+- Encryption key stored separately
 
 ---
 
-## 7. Feature Engineering
-We will derive new variables from existing data:
-* **From Timestamp:** `enrollment_date`, `enrollment_hour`, `day_of_week`.
-* **From Age:** `age_group` (e.g., 18–25, 26–35, 36–45, 46+).
-* **From Course Code:** Mapping IDs (e.g., `C001`) to readable names (e.g., `Data Analytics`).
+## 🧰 Tech Stack
+
+- Python (pandas, hashlib, cryptography)
+- Streamlit
+- Plotly
+- OpenSpec (Spec-Driven Development)
 
 ---
 
-## 8. Dashboard Layout (Streamlit Idea)
-* **Charts:** Enrollments over time, Course popularity, Age distribution, Replacement vs. New.
-* **Filters:** Course Name, Age Group, Date Range.
+## 📊 Features
+
+- Enrollment trends over time
+- Course popularity analysis
+- Age group segmentation
+- Replacement vs new enrollment analysis
 
 ---
 
-## 9. Project Title Options
-1.  **Secure Enrollment Analytics Dashboard**
-2.  **Privacy-Preserving Student Enrollment Analysis**
-3.  **Enrollment Intelligence with Data Anonymization**
+## 🧠 Key Insights (To be completed)
+
+- Peak enrollment times
+- Most popular courses
+- Age-based preferences
+- Courses with high replacement rates
 
 ---
 
-## 10. OpenSpec Feature
-> "Build an interactive dashboard to analyze student enrollment patterns while ensuring data privacy through anonymization and encryption."
+## 📁 Project Structure
+app/
+data/
+specs/
+src/
 
 ---
 
-## 11. Critical Data Cleaning (The "Real World" Story)
-The project highlights your ability to handle messy data:
-* Removing duplicate email columns.
-* Fixing messy structures.
-* Mapping codes to names.
+## 🚀 How to Run
 
----
+```bash
+pip install -r requirements.txt
+streamlit run app/dashboard.py=== ./repo_info.txt ===
+=== ./requirements.txt ===
+pandas
+streamlit
+plotly
+cryptography
+=== ./specs/open_spec.md ===
+# OpenSpec - Secure Enrollment Analytics
 
-## 12. Next Steps: Data Confirmation
-To proceed with the build, please provide the following:
+## Problem
+Sensitive student data is required for analytics, creating privacy risks.
 
-1.  **Data Details:** 5–10 sample rows (use fake data) and an example of the course codes.
-2.  **Course List:** Do you have the names, or should I invent them?
-3.  **Project Focus:** * Cybersecurity 🔐
-    * Data Analysis 📊
-    * Balanced (Recommended)
-4.  **Dashboard Tool:** Is Streamlit okay?
-5.  **Guidance Level:** Super Guided vs. Autonomous.
-"""
+## Solution
+Develop a privacy-preserving analytics system that:
+- Removes unnecessary personal data
+- Hashes sensitive identifiers
+- Encrypts datasets
+- Provides a simple dashboard
 
-file_path = 'project_spec_enrollment_analysis.md'
-with open(file_path, 'w', encoding='utf-8') as f:
-    f.write(md_content)
+## Functional Requirements
+- Load dataset
+- Clean and preprocess data
+- Display enrollment analytics
 
-print(file_path)
+## Non-Functional Requirements
+- GDPR-inspired data handling
+- Readable code
+- Local execution
+
+## Constraints
+- No backend server
+- Local storage only
+
+## Success Metrics
+- Insight clarity
+- Data security implementation=== ./src/data_cleaning.py ===
+import pandas as pd
+
+def load_data(path):
+    df = pd.read_csv(path)
+    return df
+
+def clean_data(df):
+    # Drop useless columns
+    df = df.dropna(axis=1, how='all')
+
+    # Rename columns manually (adjust if needed)
+    df.columns = [
+        "timestamp", "teacher_email", "empty", "cargar",
+        "course_edition", "name", "first_name",
+        "surname1", "surname2", "full_surname",
+        "dob", "age", "student_email",
+        "phone", "replacement"
+    ]
+
+    # Drop irrelevant columns
+    df = df.drop(columns=[
+        "empty", "cargar", "name",
+        "first_name", "surname1",
+        "surname2", "full_surname", "dob"
+    ])
+
+    # Convert timestamp
+    df["timestamp"] = pd.to_datetime(df["timestamp"], dayfirst=True)
+
+    # Feature engineering
+    df["hour"] = df["timestamp"].dt.hour
+    df["day_of_week"] = df["timestamp"].dt.day_name()
+
+    return df=== ./src/encryption.py ===
+import hashlib
+from cryptography.fernet import Fernet
+
+def hash_value(value):
+    if pd.isna(value):
+        return value
+    return hashlib.sha256(str(value).encode()).hexdigest()
+
+def anonymize(df):
+    df["teacher_email"] = df["teacher_email"].apply(hash_value)
+    df["student_email"] = df["student_email"].apply(hash_value)
+    df["phone"] = df["phone"].apply(hash_value)
+    return df
+
+def encrypt_data(data, key):
+    cipher = Fernet(key)
+    return cipher.encrypt(data)
+
+def generate_key():
+    return Fernet.generate_key()=== ./src/feature_engineering.py ===
+def extract_course_info(df):
+    def parse_course(code):
+        parts = code.split("_")
+        return {
+            "course_code": parts[3],
+            "course_id": parts[4],
+            "course_date": parts[5]
+        }
+
+    parsed = df["course_edition"].apply(parse_course)
+    df["course_code"] = parsed.apply(lambda x: x["course_code"])
+    df["course_id"] = parsed.apply(lambda x: x["course_id"])
+    df["course_date"] = parsed.apply(lambda x: x["course_date"])
+
+    return df
+
+
+def create_age_groups(df):
+    bins = [0, 25, 35, 45, 100]
+    labels = ["18-25", "26-35", "36-45", "46+"]
+    df["age_group"] = pd.cut(df["age"], bins=bins, labels=labels)
+    return df
