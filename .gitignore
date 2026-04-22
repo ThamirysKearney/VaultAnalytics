@@ -1,5 +1,7 @@
+# Ignore all files inside data folders
 data/raw/*
 data/processed/*
-*.key
-__pycache__/
-.env
+
+# BUT allow folder structure
+!data/raw/.gitkeep
+!data/processed/.gitkeep
