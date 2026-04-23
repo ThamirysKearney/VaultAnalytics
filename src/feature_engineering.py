@@ -1,22 +1,138 @@
-def extract_course_info(df):
-    def parse_course(code):
-        parts = code.split("_")
-        return {
-            "course_code": parts[3],
-            "course_id": parts[4],
-            "course_date": parts[5]
-        }
+"""
+Derives analytical features from cleaned enrollment data.
 
-    parsed = df["course_edition"].apply(parse_course)
-    df["course_code"] = parsed.apply(lambda x: x["course_code"])
-    df["course_id"] = parsed.apply(lambda x: x["course_id"])
-    df["course_date"] = parsed.apply(lambda x: x["course_date"])
+Responsibilities
+----------------
+- Extract a stable course code from the verbose course_edition string.
+- Enrich the DataFrame by merging the external course mapping CSV.
+- Create age-group bands for demographic analysis.
+
+"""
+
+import pandas as pd
+
+
+# ---------------------------------------------------------------------------
+# Course code extraction
+# ---------------------------------------------------------------------------
+
+def extract_course_code(df: pd.DataFrame) -> pd.DataFrame:
+    """
+    Extract a stable base course code from the full course edition string.
+
+    The raw ``course_edition`` field follows this naming convention::
+
+        240534_L4_T2_COCOIA_0076_15122025_LR
+        └─── base code ────┘ └── edition metadata ──┘
+
+    We keep only the first 4 underscore-separated segments.
+
+    Parameters
+    ----------
+    df : pd.DataFrame
+        Cleaned DataFrame containing a ``course_edition`` column.
+
+    Returns
+    -------
+    pd.DataFrame
+        Same DataFrame with a new ``course_code`` column added.
+
+    Example
+    -------
+    >>> extract_course_code(pd.DataFrame({"course_edition": ["240534_L4_T2_COCOIA_0076"]}))
+       course_edition        course_code
+    0  240534_L4_T2_COCOIA_0076  240534_L4_T2_COCOIA
+    """
+    if "course_edition" not in df.columns:
+        raise KeyError("'course_edition' column not found. Check the cleaning step.")
+
+    df["course_code"] = (
+        df["course_edition"]
+        .astype(str)
+        .apply(lambda x: "_".join(x.split("_")[:4]))
+    )
+    return df
+
+
+# ---------------------------------------------------------------------------
+# Course mapping enrichment
+# ---------------------------------------------------------------------------
+
+def map_course_info(df: pd.DataFrame, mapping_path: str) -> pd.DataFrame:
+    """
+    Enrich the DataFrame with course metadata from an external CSV.
+
+    The mapping CSV must contain at least a ``course_code`` column.
+    Expected additional columns: ``course_name``, ``category``, ``theme``.
+
+    Parameters
+    ----------
+    df : pd.DataFrame
+        DataFrame with a ``course_code`` column
+        (created by :func:`extract_course_code`).
+    mapping_path : str
+        Path to ``course_mapping.csv``.
+
+    Returns
+    -------
+    pd.DataFrame
+        DataFrame with course metadata columns added via a left join.
+        Rows with unmatched course codes keep NaN for metadata columns.
+    """
+    mapping_df = pd.read_csv(mapping_path)
+
+    if "course_code" not in mapping_df.columns:
+        raise ValueError(
+            f"Mapping file '{mapping_path}' has no 'course_code' column."
+        )
+
+    df = df.merge(mapping_df, on="course_code", how="left")
+
+    unmatched = df["course_code"].isna().sum() if "course_name" in df.columns \
+        else df[mapping_df.columns[1]].isna().sum()
+    if unmatched:
+        print(f"[map_course_info] {unmatched} rows had no mapping match.")
 
     return df
 
 
-def create_age_groups(df):
-    bins = [0, 25, 35, 45, 100]
-    labels = ["18-25", "26-35", "36-45", "46+"]
-    df["age_group"] = pd.cut(df["age"], bins=bins, labels=labels)
+# ---------------------------------------------------------------------------
+# Age-group segmentation
+# ---------------------------------------------------------------------------
+
+# Bin edges and their human-readable labels.
+AGE_BINS = [0, 25, 35, 45, 100]
+AGE_LABELS = ["18-25", "26-35", "36-45", "46+"]
+
+
+def create_age_groups(df: pd.DataFrame) -> pd.DataFrame:
+    """
+    Add an ``age_group`` column that segments students into bands.
+
+    Bands
+    -----
+    - 18-25
+    - 26-35
+    - 36-45
+    - 46+
+
+    Parameters
+    ----------
+    df : pd.DataFrame
+        DataFrame containing an ``age`` column (numeric).
+
+    Returns
+    -------
+    pd.DataFrame
+        Same DataFrame with ``age_group`` (Categorical) column added.
+    """
+    if "age" not in df.columns:
+        raise KeyError("'age' column not found. Check the cleaning step.")
+
+    df["age_group"] = pd.cut(
+        df["age"],
+        bins=AGE_BINS,
+        labels=AGE_LABELS,
+        right=True,
+    )
     return df
