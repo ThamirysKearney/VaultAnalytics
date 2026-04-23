@@ -4,4 +4,4 @@ data/processed/*
 
 # BUT allow folder structure
 !data/raw/.gitkeep
-!data/processed/.gitkeep
+!data/processed/.gitkeepdata/processed/
