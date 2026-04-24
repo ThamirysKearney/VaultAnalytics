@@ -1,7 +1,45 @@
-# Ignore all files inside data folders
-data/raw/*
-data/processed/*
+# -------------------------------------------------------
+# SENSITIVE DATA — never commit raw PII files
+# -------------------------------------------------------
+data/raw/*.csv
+data/raw/*.xlsx
+data/raw/*.xls
 
-# BUT allow folder structure
-!data/raw/.gitkeep
-!data/processed/.gitkeepdata/processed/
+# Exception: the course mapping file contains no PII and is safe to track
+!data/raw/course_mapping.csv
+
+# Processed output is derived from PII — also ignored
+data/processed/
+
+# -------------------------------------------------------
+# SECRETS & KEYS
+# -------------------------------------------------------
+.env
+*.key
+*.pem
+secrets.json
+
+# -------------------------------------------------------
+# Python
+# -------------------------------------------------------
+__pycache__/
+*.py[cod]
+*.pyo
+.venv/
+venv/
+env/
+*.egg-info/
+dist/
+build/
+.pytest_cache/
+
+# -------------------------------------------------------
+# OS / Editor
+# -------------------------------------------------------
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+*.swp
+# Pycache (explicit)
+src/__pycache__/
