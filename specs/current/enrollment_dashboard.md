@@ -53,21 +53,21 @@ This creates a conflict:
 
 | Column Position | Raw Name | Mapped Name | Keep? | Reason |
 |---|---|---|---|---|
-| 0 | *(timestamp)* | `timestamp` | ✅ | Core analytical dimension |
-| 1 | *(teacher email)* | `teacher_email` | ✅ (hashed) | Needed to identify course runs |
-| 2 | *(empty)* | `_drop_empty` | ❌ | No analytical value |
-| 3 | *(cargar)* | `_drop_cargar` | ❌ | System artefact |
-| 4 | *(course edition)* | `course_edition` | ✅ | Base for `course_code` |
-| 5 | *(name)* | `_drop_name` | ❌ | PII — not needed for analysis |
-| 6 | *(first name)* | `_drop_first_name` | ❌ | PII |
-| 7 | *(surname 1)* | `_drop_surname1` | ❌ | PII |
-| 8 | *(surname 2)* | `_drop_surname2` | ❌ | PII |
-| 9 | *(full surname)* | `_drop_full_surname` | ❌ | PII |
-| 10 | *(date of birth)* | `dob` | ❌ | Age is derived; DOB itself is PII |
-| 11 | *(age)* | `age` | ✅ | Demographic analysis |
-| 12 | *(student email)* | `student_email` | ✅ (hashed) | Deduplication |
-| 13 | *(phone)* | `phone` | ✅ (hashed) | Deduplication |
-| 14 | *(replacement)* | `replacement` | ✅ | Replacement vs new metric |
+| 0 | *(timestamp)* | `timestamp` | keep | Core analytical dimension |
+| 1 | *(teacher email)* | `teacher_email` | keep (hashed) | Needed to identify course runs |
+| 2 | *(empty)* | `_drop_empty` | drop | No analytical value |
+| 3 | *(cargar)* | `_drop_cargar` | drop | System artefact |
+| 4 | *(course edition)* | `course_edition` | keep | Base for `course_code` |
+| 5 | *(name)* | `_drop_name` | drop | PII — not needed for analysis |
+| 6 | *(first name)* | `_drop_first_name` | drop | PII |
+| 7 | *(surname 1)* | `_drop_surname1` | drop | PII |
+| 8 | *(surname 2)* | `_drop_surname2` | drop | PII |
+| 9 | *(full surname)* | `_drop_full_surname` | drop | PII |
+| 10 | *(date of birth)* | `dob` | drop | Age is derived; DOB itself is PII |
+| 11 | *(age)* | `age` | keep | Demographic analysis |
+| 12 | *(student email)* | `student_email` | keep (hashed) | Deduplication |
+| 13 | *(phone)* | `phone` | keep (hashed) | Deduplication |
+| 14 | *(replacement)* | `replacement` | keep | Replacement vs new metric |
 
 ### 5.2 Processed Data Schema
 
@@ -98,8 +98,8 @@ After the pipeline runs, `data/processed/data.csv` must contain:
 
 | Data Type | Strategy | Reversible? | Justification |
 |---|---|---|---|
-| Email addresses | SHA-256 hash | ❌ No | Only needed for deduplication |
-| Phone numbers | SHA-256 hash | ❌ No | Only needed for deduplication |
+| Email addresses | SHA-256 hash | No | Only needed for deduplication |
+| Phone numbers | SHA-256 hash | No | Only needed for deduplication |
 | Names / Surnames | **Dropped entirely** | N/A | No analytical use case |
 | Date of birth | **Dropped** (age kept) | N/A | Age is sufficient; DOB is PII |
 
@@ -199,7 +199,7 @@ enrollment-project/
 │   └── dashboard.py          # Streamlit app
 ├── data/
 │   ├── raw/                   # Source files — gitignored (except mapping)
-│   │   └── course_mapping.csv # ✅ Safe to commit
+│   │   └── course_mapping.csv # safe to commit — no PII
 │   └── processed/             # Pipeline output — gitignored
 │       └── data.csv
 ├── specs/
