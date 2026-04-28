@@ -1,11 +1,11 @@
-# 📊 Enrollment Analytics Dashboard
+#  Enrollment Analytics Dashboard
 
 > A Spec-Driven Development project for analysing course enrollment patterns  
 > with a full PII encryption layer.
 
 ---
 
-## 🧭 Project Summary
+##  Project Summary
 
 This project looks at enrollment data to figure out which courses are popular, who's signing up, and how people register. The goal is to help market the courses that don't have many students yet.
 
@@ -23,7 +23,7 @@ All the analysis is done on the anonymized data, never the raw stuff.
 
 ---
 
-## 🔒 Cybersecurity Layer
+##  Cybersecurity Layer
 
 Since I´m studying for the **Google Cybersecurity Certificate**, I wan to practice the following skills:
 
@@ -37,7 +37,7 @@ Since I´m studying for the **Google Cybersecurity Certificate**, I wan to pract
 
 ---
 
-## 🗂 Project Structure
+##  Project Structure
 
 ```
 enrollment-project/
@@ -64,7 +64,7 @@ enrollment-project/
 
 ---
 
-## 🚀 Getting Started
+##  Getting Started
 
 ### 1. Install dependencies
 
@@ -96,7 +96,7 @@ streamlit run app/dashboard.py
 
 ---
 
-## 🛠 Tech Stack
+##  Tech Stack
 
 | Layer | Technology |
 |---|---|
@@ -110,7 +110,7 @@ streamlit run app/dashboard.py
 
 ---
 
-## 📐 Methodology: Spec-Driven Development
+##  Methodology: Spec-Driven Development
 
 This project follows **Spec-Driven Development (SDD)**:
 
@@ -120,7 +120,7 @@ The master spec lives at [`specs/current/enrollment_dashboard.md`](specs/current
 
 ---
 
-## 📈 Dashboard Features
+##  Dashboard Features
 
 - **KPI strip** — Total enrollments, unique courses, average age, replacement rate
 - **Enrollments by day of week** — identify peak registration days
@@ -131,13 +131,13 @@ The master spec lives at [`specs/current/enrollment_dashboard.md`](specs/current
 
 ---
 
-## 🔐 Data Privacy Statement
+##  Data Privacy Statement
 
 All personal data (names, email addresses, phone numbers) is either dropped or irreversibly hashed before any analysis is performed. The processed dataset contains no plain-text PII. Raw source files are excluded from version control via `.gitignore`.
 
 ---
 
-## 👩‍💻 Author
+##  Author
 
 **Thamirys Kearney**  
 Data Analytics | Cybersecurity (Google Certificate — in progress)  
