@@ -87,8 +87,10 @@ course_display = [code_to_name.get(c, c) for c in course_options]
 selected_display = st.sidebar.multiselect(
     "Course(s)",
     options=course_display,
-    default=course_display,
+    default=[],
 )
+if st.sidebar.checkbox("Select all courses", value=False):
+    selected_display = course_display
 
 # map selected display names back to codes
 name_to_code = {v: k for k, v in code_to_name.items()}
@@ -100,8 +102,10 @@ if "age_group" in df.columns:
     selected_age_groups = st.sidebar.multiselect(
         "Age group(s)",
         options=all_age_groups,
-        default=all_age_groups,
+        default=[],
     )
+    if st.sidebar.checkbox("Select all age groups", value=False):
+        selected_age_groups = all_age_groups
 else:
     selected_age_groups = None
 
