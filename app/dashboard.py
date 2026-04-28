@@ -36,7 +36,7 @@ try:
     df = load_data(DATA_PATH)
 except FileNotFoundError:
     st.error(
-        "⚠️  Processed data not found. "
+        "Processed data not found. "
         "Please run `python src/run_pipeline.py` first."
     )
     st.stop()
