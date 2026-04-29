@@ -144,6 +144,14 @@ def _calculate_age(df: pd.DataFrame) -> pd.DataFrame:
     dob = pd.to_datetime(df["dob"], dayfirst=True, errors="coerce")
     today = pd.Timestamp.today()
     df["age"] = ((today - dob).dt.days // 365).where(dob.notna())
+
+    # clamp to realistic human age range — catches bad DOB entries
+    invalid = df["age"].notna() & ((df["age"] < 0) | (df["age"] > 100))
+    n_invalid = invalid.sum()
+    if n_invalid:
+        print(f"[calculate_age] Removed {n_invalid} rows with invalid age (outside 0-100).")
+    df.loc[invalid, "age"] = None
+
     valid = df["age"].notna().sum()
     print(f"[calculate_age] Age calculated for {valid} rows.")
     return df
