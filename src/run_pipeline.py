@@ -14,7 +14,7 @@ import pandas as pd
 from cryptography.fernet import Fernet
 
 from data_cleaning import load_data, clean_data
-from encryption import anonymize_pii, generate_key
+from encryption import anonymise_pii, generate_key
 from feature_engineering import extract_course_code, map_course_info, create_age_groups
 
 
@@ -53,7 +53,7 @@ def run():
     # Step 3 — Anonymise PII  (hashing — one-way, irreversible)
     # ------------------------------------------------------------------
     print("\n[3/5] Anonymising PII columns …")
-    df = anonymize_pii(df)
+    df = anonymise_pii(df)
 
     # Fernet encryption 
     # Commented out because this pipeline doesn't actually need it

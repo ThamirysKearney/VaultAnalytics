@@ -1,5 +1,5 @@
 """
-Derives analytical features from cleaned enrollment data.
+Derives analytical features from cleaned enrolment data.
 
 Responsibilities
 ----------------
