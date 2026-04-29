@@ -7,7 +7,7 @@ Currently, the project lacks a reproducible pipeline to transform raw data into 
 Create a pipeline script that:
 - Loads raw data
 - Cleans dataset
-- Anonymizes PII
+- Anonymises PII
 - Applies feature engineering
 - Saves processed dataset
 

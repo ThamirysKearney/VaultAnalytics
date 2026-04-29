@@ -1,5 +1,5 @@
 """
-Loads and cleans raw enrollment data exported from the registration form.
+Loads and cleans raw enrolment data exported from the registration form.
 
 Responsibilities
 ----------------
@@ -159,7 +159,7 @@ def _calculate_age(df: pd.DataFrame) -> pd.DataFrame:
 
 def clean_data(df: pd.DataFrame) -> pd.DataFrame:
     """
-    Apply the full cleaning pipeline to a raw enrollment DataFrame.
+    Apply the full cleaning pipeline to a raw enrolment DataFrame.
 
     Steps
     -----

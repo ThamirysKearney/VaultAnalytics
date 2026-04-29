@@ -1,13 +1,13 @@
-#  Enrollment Analytics Dashboard
+#  Enrolment Analytics Dashboard
 
-> A Spec-Driven Development project for analysing course enrollment patterns  
+> A Spec-Driven Development project for analysing course enrolment patterns  
 > with a full PII encryption layer.
 
 ---
 
 ##  Project Summary
 
-This project looks at enrollment data to figure out which courses are popular, who's signing up, and how people register. The goal is to help market the courses that don't have many students yet.
+This project looks at enrolment data to figure out which courses are popular, who's signing up, and how people register. The goal is to help market the courses that don't have many students yet.
 
 The problem: The raw data has personal info like email addresses, phone numbers, and names. I need to protect that before I can do any analysis.
 
@@ -19,7 +19,7 @@ Other PII gets hashed with SHA-256 (like emails and phone numbers) - this is one
 
 I also added Fernet encryption as an option for cases where someone with permission might need to recover the original data later
 
-All the analysis is done on the anonymized data, never the raw stuff.
+All the analysis is done on the anonymised data, never the raw stuff.
 
 ---
 
@@ -40,7 +40,7 @@ Since I´m studying for the **Google Cybersecurity Certificate**, I wan to pract
 ##  Project Structure
 
 ```
-enrollment-project/
+enrolment-project/
 ├── app/
 │   └── dashboard.py           # Streamlit analytics dashboard
 ├── data/
@@ -49,7 +49,7 @@ enrollment-project/
 │   └── processed/              # Pipeline output — gitignored
 ├── specs/
 │   ├── current/
-│   │   └── enrollment_dashboard.md  # Master spec (SDD)
+│   │   └── enrolment_dashboard.md  # Master spec (SDD)
 │   └── changes/
 │       └── add_pipeline.md
 ├── src/
@@ -116,17 +116,17 @@ This project follows **Spec-Driven Development (SDD)**:
 
 > The specification is written *before* any code. All implementation decisions must trace back to the spec. Changes go through a formal Change Proposal process.
 
-The master spec lives at [`specs/current/enrollment_dashboard.md`](specs/current/enrollment_dashboard.md).
+The master spec lives at [`specs/current/enrolment_dashboard.md`](specs/current/enrolment_dashboard.md).
 
 ---
 
 ##  Dashboard Features
 
-- **KPI strip** — Total enrollments, unique courses, average age, replacement rate
-- **Enrollments by day of week** — identify peak registration days
+- **KPI strip** — Total enrolments, unique courses, average age, replacement rate
+- **Enrolments by day of week** — identify peak registration days
 - **Age group distribution** — understand student demographics per course
-- **Replacement vs new** — track re-enrollment patterns
-- **Enrollments per course** — spot low-popularity courses at a glance
+- **Replacement vs new** — track re-enrolment patterns
+- **Enrolments per course** — spot low-popularity courses at a glance
 - **Sidebar filters** — filter by course and age group
 
 ---

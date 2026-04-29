@@ -5,7 +5,7 @@ Handles PII protection via two strategies:
   2. Symmetric encryption (Fernet / AES-128-CBC) — for fields that may
      need to be decrypted later by an authorised party.
 
-Part of the Enrollment Analytics Project — Cybersecurity layer.
+Part of the Enrolment Analytics Project — Cybersecurity layer.
 
 """
 
@@ -42,7 +42,7 @@ def hash_value(value: str) -> str:
     return hashlib.sha256(str(value).encode()).hexdigest()
 
 
-def anonymize_pii(df: pd.DataFrame) -> pd.DataFrame:
+def anonymise_pii(df: pd.DataFrame) -> pd.DataFrame:
     """
     Replace PII columns with their SHA-256 hashes IN PLACE.
 
@@ -55,7 +55,7 @@ def anonymize_pii(df: pd.DataFrame) -> pd.DataFrame:
     Parameters
     ----------
     df : pd.DataFrame
-        Cleaned (but not yet anonymised) enrollment data.
+        Cleaned (but not yet anonymised) enrolment data.
 
     Returns
     -------

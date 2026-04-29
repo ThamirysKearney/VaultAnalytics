@@ -1,8 +1,8 @@
-# Spec: Enrollment Analytics Dashboard 
+# Spec: Enrolment Analytics Dashboard 
 
 ## 1. Overview
 
-This document is the **single source of truth** for the Enrollment Analytics Dashboard.  
+This document is the **single source of truth** for the Enrolment Analytics Dashboard.  
 All code, tests, and features must conform to the specifications defined here.  
 Any change to the system behaviour must be proposed via a **Change Proposal** (see `specs/changes/`).
 
@@ -12,13 +12,13 @@ Any change to the system behaviour must be proposed via a **Change Proposal** (s
 
 ## 2. Problem Statement
 
-The company collects enrollment data that contains **personally identifiable information (PII)** — names, email addresses, and phone numbers.
+The company collects enrolment data that contains **personally identifiable information (PII)** — names, email addresses, and phone numbers.
 
 This creates a conflict:
 
 | Goal | Constraint |
 |---|---|
-| Analyse enrollment patterns and course popularity | Must not expose raw PII during analysis |
+| Analyse enrolment patterns and course popularity | Must not expose raw PII during analysis |
 | Identify low-attendance courses and suggest promotions | Data must be safe to use in a development environment |
 | Build a portfolio-worthy project | Must demonstrate cybersecurity best practices |
 
@@ -30,11 +30,11 @@ This creates a conflict:
 
 - [x] **G1** — Protect PII before any data leaves the raw data folder.
 - [x] **G2** — Produce a clean, anonymised dataset safe for analysis.
-- [x] **G3** — Identify which courses have low enrollment.
+- [x] **G3** — Identify which courses have low enrolment.
 - [x] **G4** — Analyse the age distribution of students per course.
-- [x] **G5** — Detect enrollment patterns by day and hour.
+- [x] **G5** — Detect enrolment patterns by day and hour.
 - [ ] **G6** — Suggest promotional actions for low-popularity courses *(Phase 2)*.
-- [ ] **G7** — Analyse and visualise attendance (vs enrollment) drop-off *(Phase 2)*.
+- [ ] **G7** — Analyse and visualise attendance (vs enrolment) drop-off *(Phase 2)*.
 
 ---
 
@@ -75,11 +75,11 @@ After the pipeline runs, `data/processed/data.csv` must contain:
 
 | Column | Type | Description |
 |---|---|---|
-| `timestamp` | datetime | Parsed enrollment timestamp |
+| `timestamp` | datetime | Parsed enrolment timestamp |
 | `teacher_email` | str (SHA-256) | Hashed teacher identifier |
 | `course_edition` | str | Full course edition string |
 | `course_code` | str | First 4 segments of `course_edition` |
-| `age` | int | Student age at enrollment |
+| `age` | int | Student age at enrolment |
 | `age_group` | category | One of: 18-25, 26-35, 36-45, 46+ |
 | `student_email` | str (SHA-256) | Hashed student identifier |
 | `phone` | str (SHA-256) | Hashed phone number |
@@ -132,7 +132,7 @@ The pipeline must execute in this exact order:
 ```
 1. load_data()          → raw DataFrame
 2. clean_data()         → renamed + deduplicated + parsed timestamps
-3. anonymize_pii()      → PII columns replaced with SHA-256 hashes
+3. anonymise_pii()      → PII columns replaced with SHA-256 hashes
 4. extract_course_code() → course_code derived from course_edition
 5. map_course_info()    → metadata joined from course_mapping.csv
 6. create_age_groups()  → age_group column added
@@ -150,7 +150,7 @@ Reason: feature engineering should never operate on plain-text PII.
 
 | KPI | Formula |
 |---|---|
-| Total Enrollments | `len(df_filtered)` |
+| Total Enrolments | `len(df_filtered)` |
 | Unique Courses | `df_filtered["course_code"].nunique()` |
 | Average Age | `df_filtered["age"].mean()` |
 | Replacement Rate (%) | `(df_filtered["replacement"] == "SI").mean() * 100` |
@@ -159,10 +159,10 @@ Reason: feature engineering should never operate on plain-text PII.
 
 | Chart | Type | Columns Used |
 |---|---|---|
-| Enrollments by Day of Week | Histogram | `day_of_week` |
+| Enrolments by Day of Week | Histogram | `day_of_week` |
 | Age Group Distribution | Histogram | `age_group` |
 | Replacement vs New | Pie chart | `replacement` |
-| Enrollments per Course | Bar chart | `course_code` |
+| Enrolments per Course | Bar chart | `course_code` |
 
 ### 8.3 Filters (sidebar)
 
@@ -194,7 +194,7 @@ Reason: feature engineering should never operate on plain-text PII.
 ## 10. Folder Structure
 
 ```
-enrollment-project/
+enrolment-project/
 ├── app/
 │   └── dashboard.py          # Streamlit app
 ├── data/
@@ -204,7 +204,7 @@ enrollment-project/
 │       └── data.csv
 ├── specs/
 │   ├── current/
-│   │   └── enrollment_dashboard.md  # ← this file
+│   │   └── enrolment_dashboard.md  # ← this file
 │   └── changes/
 │       └── add_pipeline.md
 ├── src/

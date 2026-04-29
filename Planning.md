@@ -1,7 +1,7 @@
-#  Secure Student Enrollment Analytics Project
+#  Secure Student Enrolment Analytics Project
 
 ##  Goal
-Analyze student enrollment patterns while preserving sensitive data using anonymization and encryption.
+Analyze student enrolment patterns while preserving sensitive data using anonymisation and encryption.
 
 ##  Security Focus
 - Remove PII (names, surnames, DOB)
@@ -9,10 +9,10 @@ Analyze student enrollment patterns while preserving sensitive data using anonym
 - Encrypt dataset for storage
 
 ##  Analytics Focus
-- Enrollment trends over time
+- Enrolment trends over time
 - Course popularity
 - Age group analysis
-- Replacement vs new enrollments
+- Replacement vs new enrolments
 
 ##  Why This Project
 This project demonstrates:
