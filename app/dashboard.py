@@ -1,6 +1,4 @@
 """
-dashboard.py
-============
 Streamlit dashboard for the Enrolment Analytics project.
 
 Run from the project root:
@@ -60,14 +58,6 @@ except FileNotFoundError:
 full_code_to_name = dict(zip(mapping["course_code"], mapping["course_name"]))
 full_code_to_category = dict(zip(mapping["course_code"], mapping["category"]))
 
-
-def truncate(name: str, limit: int = 30) -> str:
-    """Truncate a course name for display on chart axes."""
-    if isinstance(name, str) and len(name) > limit:
-        return name[:limit] + "..."
-    return name if isinstance(name, str) else ""
-
-
 # ------------------------------------------------------------------
 # SIDEBAR — CASCADING FILTERS
 # ------------------------------------------------------------------
@@ -116,7 +106,7 @@ if "age_group" in df.columns:
 else:
     selected_age_groups = None
 
-# apply filters — if no courses selected, show all
+# apply filters — if no courses selected show all
 if selected_codes:
     df_filtered = df[df["course_code"].isin(selected_codes)]
 else:
@@ -174,10 +164,11 @@ with col1:
             x="day_of_week",
             category_orders={"day_of_week": day_order},
             color_discrete_sequence=["#4C78A8"],
-            labels={"day_of_week": "Day", "count": "Enrolments"},
+            labels={"day_of_week": "Day"},
         )
         fig1.update_layout(bargap=0.2)
         fig1.update_yaxes(title="Enrolments")
+        fig1.update_xaxes(title="")
         st.plotly_chart(fig1, use_container_width=True)
     else:
         st.info("No day_of_week column found.")
@@ -201,16 +192,13 @@ with col2:
 st.divider()
 
 # ------------------------------------------------------------------
-# ROW 2 — New vs Returning  |  Enrolments by Course
+# ROW 2 — New vs Returning  |  Enrolments by Course (horizontal)
 # ------------------------------------------------------------------
 col3, col4 = st.columns(2)
 
 with col3:
     st.subheader("New vs Returning Students")
-    st.caption(
-        "SI = student repeating a course (returning). "
-        "No = first-time enrolment."
-    )
+    st.caption("SI = returning student. No = first-time enrolment.")
     if "replacement" in df_filtered.columns:
         replacement_counts = (
             df_filtered["replacement"]
@@ -222,7 +210,8 @@ with col3:
             {"No": "New student", "SI": "Returning student"}
         )
         replacement_counts["pct"] = (
-            replacement_counts["count"] / replacement_counts["count"].sum() * 100
+            replacement_counts["count"]
+            / replacement_counts["count"].sum() * 100
         ).round(1).astype(str) + "%"
 
         fig3 = px.bar(
@@ -235,7 +224,7 @@ with col3:
                 "New student": "#4C78A8",
                 "Returning student": "#F58518",
             },
-            labels={"label": "", "count": "Students"},
+            labels={"count": "Students"},
         )
         fig3.update_traces(textposition="outside")
         fig3.update_layout(showlegend=False)
@@ -254,21 +243,18 @@ with col4:
             .reset_index()
         )
         course_counts.columns = ["course_code", "enrolments"]
-        course_counts["label"] = course_counts["course_code"].map(
-            lambda c: truncate(full_code_to_name.get(c, c))
-        )
         course_counts["course_name"] = course_counts["course_code"].map(full_code_to_name)
+        course_counts = course_counts.sort_values("enrolments", ascending=True)
+
         fig4 = px.bar(
             course_counts,
-            x="label",
-            y="enrolments",
+            x="enrolments",
+            y="course_name",
+            orientation="h",
             color_discrete_sequence=["#72B7B2"],
-            labels={"enrolments": "Enrolments"},
-            hover_data={"course_name": True, "label": False},
+            labels={"enrolments": "Enrolments", "course_name": ""},
         )
-        fig4.update_layout(xaxis_tickangle=0)
-        fig4.update_xaxes(title="")
-        fig4.update_yaxes(title="Enrolments")
+        fig4.update_yaxes(automargin=True)
         st.plotly_chart(fig4, use_container_width=True)
     else:
         st.info("No data available for selected filters.")
@@ -280,13 +266,13 @@ st.divider()
 # ------------------------------------------------------------------
 st.header("Insights")
 st.caption(
-    "Analysis of enrolment patterns to support course promotion decisions. "
-    "All insights are calculated from anonymised data."
+    "Which courses should we promote next quarter? "
+    "Based on enrolment volume, programme, and age profile."
 )
 
-# -- Insight 1: Course popularity ranking --
+# -- Insight 1: Course popularity ranking (horizontal bar) --
 st.subheader("Course Popularity Ranking")
-st.caption("All courses ranked by total enrolments, colour-coded by programme.")
+st.caption("Courses ranked by total enrolments. Colour indicates programme.")
 
 popularity = (
     df_filtered["course_code"]
@@ -296,33 +282,54 @@ popularity = (
 popularity.columns = ["course_code", "enrolments"]
 popularity["course_name"] = popularity["course_code"].map(full_code_to_name)
 popularity["category"] = popularity["course_code"].map(full_code_to_category)
-popularity["label"] = popularity["course_name"].apply(truncate)
-popularity = popularity.sort_values("enrolments", ascending=False)
+popularity = popularity.sort_values("enrolments", ascending=True)
 
 fig5 = px.bar(
     popularity,
-    x="label",
-    y="enrolments",
+    x="enrolments",
+    y="course_name",
+    orientation="h",
     color="category",
     color_discrete_map={"Ciudadania": "#4C78A8", "Mayores": "#F58518"},
     labels={
         "enrolments": "Enrolments",
+        "course_name": "",
         "category": "Programme",
     },
-    hover_data={"course_name": True, "label": False},
 )
-fig5.update_layout(xaxis_tickangle=0)
-fig5.update_xaxes(title="")
-fig5.update_yaxes(title="Enrolments")
+fig5.update_yaxes(automargin=True)
 st.plotly_chart(fig5, use_container_width=True)
+
+# -- Insight 2: Courses to promote next quarter --
+st.subheader("Courses to Promote Next Quarter")
+st.caption(
+    "Courses in the bottom 20% by enrolment count. "
+    "Low enrolment relative to other courses suggests promotional opportunity."
+)
+
+threshold = popularity["enrolments"].quantile(0.20)
+to_promote = popularity[popularity["enrolments"] <= threshold][
+    ["course_name", "category", "enrolments"]
+].sort_values("enrolments").copy()
+to_promote.columns = ["Course", "Programme", "Enrolments"]
+to_promote = to_promote.reset_index(drop=True)
+
+if to_promote.empty:
+    st.info("No courses flagged for the current filter selection.")
+else:
+    st.dataframe(to_promote, use_container_width=True)
+    st.caption(
+        f"Flagged: courses with {int(threshold)} enrolments or fewer "
+        f"({len(to_promote)} course(s))."
+    )
 
 st.divider()
 
-# -- Insight 2: Age distribution by programme --
+# -- Insight 3: Age distribution by programme --
 st.subheader("Age Distribution by Programme")
 st.caption(
-    "Compares the age profile of students between "
-    "Ciudadania and Mayores programmes."
+    "Understanding which age groups each programme attracts "
+    "helps target promotional campaigns more effectively."
 )
 
 if "age" in df_filtered.columns and "category" in df_filtered.columns:
